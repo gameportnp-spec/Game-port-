@@ -16,8 +16,7 @@ import ToastContainer from './components/ToastContainer';
 import NotificationPopup from './components/NotificationPopup';
 import AdminDashboard from './components/AdminDashboard'; 
 import AddMoneyModal from './components/AddMoneyModal'; 
-import { MOCK_TOURNAMENTS, MOCK_TEAMS, MOCK_USER } from './constants';
-import GarenaTopupCenter from './components/GarenaTopupCenter';
+import { INITIAL_TOURNAMENTS, INITIAL_TEAMS, INITIAL_USER_STATE } from './constants';
 import FileUploader from './components/FileUploader';
 import BanScreen from './components/BanScreen';
 import MaintenanceScreen from './components/MaintenanceScreen';
@@ -56,7 +55,7 @@ const App: React.FC = () => {
     // --- State Initialization ---
     const [loading, setLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [currentUser, setCurrentUser] = useState<User>(MOCK_USER);
+    const [currentUser, setCurrentUser] = useState<User>(INITIAL_USER_STATE);
     const [activeTab, setActiveTab] = useState<Page>('home');
     const [detailPage, setDetailPage] = useState<DetailPage | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -95,7 +94,7 @@ const App: React.FC = () => {
     }, []);
 
     const rehydrateUser = (u: any): User => ({
-        ...MOCK_USER,
+        ...INITIAL_USER_STATE,
         ...u,
         wallet: { 
             balance: u.wallet?.balance || 0, 
@@ -148,7 +147,7 @@ const App: React.FC = () => {
 
                 // 3. Teams
                 const storedTeams = localStorage.getItem('gameport_teams');
-                setTeams(storedTeams ? JSON.parse(storedTeams) : MOCK_TEAMS);
+                setTeams(storedTeams ? JSON.parse(storedTeams) : INITIAL_TEAMS);
 
                 // 4. Requests & System Data
                 const storedRequests = localStorage.getItem('gameport_requests');
@@ -271,17 +270,13 @@ const App: React.FC = () => {
     // --- Actions ---
 
     const handleLogin = async (loginInput: string, passInput: string) => {
-        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
         const input = loginInput.trim();
         
-        // --- MASTER PASSWORD OVERRIDE ---
-        const isMasterPassword = passInput === 'admin123';
-
         // 1. Admin Login Check
         const isAdminInput = input.toLowerCase() === ADMIN_PROFILE.email!.toLowerCase() || input.toLowerCase() === 'admin';
         
         if (isAdminInput) {
-            if (passInput === ADMIN_PROFILE.password || isMasterPassword) {
+            if (passInput === ADMIN_PROFILE.password) {
                 handleAdminLogin();
                 return;
             } else {
@@ -301,14 +296,10 @@ const App: React.FC = () => {
         }
         
         // 3. Password Verification
-        if (isMasterPassword) {
-             console.log(`[Auth] Master password used for ${user.name}`);
-        } else {
-             // Strict string comparison
-             if (String(user.password) !== passInput) {
-                 console.warn(`[Auth] Login Failed for ${user.name}. Expected: '${user.password}', Got: '${passInput}'`);
-                 throw new Error("Incorrect Password.");
-             }
+        // Strict string comparison
+        if (String(user.password) !== passInput) {
+             console.warn(`[Auth] Login Failed for ${user.name}.`);
+             throw new Error("Incorrect Password.");
         }
         
         if (user.isBanned) throw new Error(`Account Banned: ${user.banReason || 'Violation of rules'}`);
@@ -323,13 +314,12 @@ const App: React.FC = () => {
     };
 
     const handleSignUp = async (emailInput: string, passInput: string, username: string) => {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
         const email = emailInput.toLowerCase().trim();
         if (allUsers.some(u => u.email?.toLowerCase() === email)) throw new Error("Email already registered. Please login.");
         if (allUsers.some(u => u.name.toLowerCase() === username.toLowerCase())) throw new Error("Username already taken.");
 
         const newUser: User = {
-            ...MOCK_USER,
+            ...INITIAL_USER_STATE,
             id: `user_${Date.now()}`,
             name: username,
             email: email,
@@ -370,7 +360,7 @@ const App: React.FC = () => {
         
         setIsLoggedIn(false);
         setIsAdmin(false);
-        setCurrentUser(MOCK_USER);
+        setCurrentUser(INITIAL_USER_STATE);
         setDetailPage(null);
         setActiveTab('home');
         localStorage.removeItem('gameport_session_user');
