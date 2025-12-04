@@ -12,21 +12,19 @@ const defaultSliderImages = [
 interface AuthScreenProps {
     onLogin: (email: string, password: string) => Promise<void>;
     onSignUp: (email: string, password: string, username: string) => Promise<void>;
-    onGuestLogin: () => Promise<void>;
     onAdminLogin: () => void;
     onForgotPassword: (email: string) => Promise<string>;
     onResetPassword: (email: string, newPass: string) => Promise<void>;
     banners?: LoginBanner[];
 }
 
-const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin, onAdminLogin, onForgotPassword, onResetPassword, banners = [] }) => {
+const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onAdminLogin, onForgotPassword, onResetPassword, banners = [] }) => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [authMode, setAuthMode] = useState<'login' | 'signup' | 'forgot'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [formLoading, setFormLoading] = useState(false);
-    const [guestLoading, setGuestLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
     // Password Visibility Toggle
@@ -41,7 +39,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
     // Admin Pin State
     const [isPinModalOpen, setIsPinModalOpen] = useState(false);
 
-    const overallLoading = formLoading || guestLoading;
     const activeImages = banners.length > 0 ? banners.map(b => b.imageUrl) : defaultSliderImages;
 
     useEffect(() => {
@@ -62,7 +59,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (overallLoading) return;
+        if (formLoading) return;
         setFormLoading(true);
         setError(null);
 
@@ -114,19 +111,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
         }
     };
     
-    const handleGuestSubmit = async () => {
-        if (overallLoading) return;
-        setGuestLoading(true);
-        setError(null);
-        try {
-            await onGuestLogin();
-        } catch (error: any) {
-             console.error(error);
-             setError(error.message || "Guest login failed.");
-             setGuestLoading(false);
-        }
-    };
-
     return (
         <div className="relative w-full h-screen overflow-hidden flex flex-col">
             {/* Hero Slider */}
@@ -153,7 +137,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                             onClick={() => setCurrentSlide(index)}
                             aria-label={`Go to slide ${index + 1}`}
                             className={`w-3 h-3 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-orange-500 scale-125' : 'bg-white/50 hover:bg-white'}`}
-                            disabled={overallLoading}
+                            disabled={formLoading}
                         />
                     ))}
                 </div>
@@ -191,7 +175,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                                     onChange={(e) => setUsername(e.target.value)}
                                     className="w-full px-4 py-3 bg-gray-800/70 border-2 border-transparent rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 disabled:opacity-50"
                                     required
-                                    disabled={overallLoading}
+                                    disabled={formLoading}
                                 />
                             </div>
                         )}
@@ -206,7 +190,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full px-4 py-3 bg-gray-800/70 border-2 border-transparent rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 disabled:opacity-50"
                                     required
-                                    disabled={overallLoading || (authMode === 'forgot' && resetStep > 0)}
+                                    disabled={formLoading || (authMode === 'forgot' && resetStep > 0)}
                                 />
                             </div>
                         )}
@@ -221,13 +205,13 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full px-4 py-3 bg-gray-800/70 border-2 border-transparent rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 pr-10"
                                     required
-                                    disabled={overallLoading}
+                                    disabled={formLoading}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none"
-                                    disabled={overallLoading}
+                                    disabled={formLoading}
                                 >
                                     {showPassword ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -294,7 +278,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                                     type="button" 
                                     onClick={() => { setAuthMode('forgot'); setResetStep(0); }}
                                     className="text-xs text-orange-400 hover:text-orange-300 hover:underline disabled:opacity-50"
-                                    disabled={overallLoading}
+                                    disabled={formLoading}
                                 >
                                     Forgot Password?
                                 </button>
@@ -305,7 +289,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                             <button
                                 type="submit"
                                 className="w-full py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold rounded-lg ripple transform transition-transform duration-200 hover:scale-105 active:scale-95 flex justify-center items-center disabled:opacity-70 disabled:cursor-wait disabled:hover:scale-100"
-                                disabled={overallLoading}
+                                disabled={formLoading}
                             >
                                  {formLoading ? (
                                      <div className="flex items-center space-x-2">
@@ -321,30 +305,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                         </div>
                     </form>
 
-                    {authMode !== 'forgot' && (
-                        <>
-                            <div className="text-center text-gray-400 my-4">OR</div>
-                            <button
-                                onClick={handleGuestSubmit}
-                                className="w-full py-3 bg-gray-700/80 text-white font-semibold rounded-lg transform transition-transform duration-200 hover:scale-105 active:scale-95 hover:bg-gray-600 disabled:opacity-70 disabled:cursor-wait disabled:hover:scale-100 disabled:hover:animate-none flex justify-center items-center"
-                                disabled={overallLoading}
-                            >
-                                {guestLoading ? (
-                                    <div className="flex items-center space-x-2">
-                                        <div className="w-5 h-5 border-2 border-t-white border-r-white border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-                                        <span>Logging In...</span>
-                                    </div>
-                                ) : 'CONTINUE AS GUEST'}
-                            </button>
-                        </>
-                    )}
-
                     <div className="text-center mt-6">
                         {authMode === 'forgot' ? (
                             <button 
                                 onClick={() => { setAuthMode('login'); setResetStep(0); }} 
                                 className="text-sm font-semibold text-gray-400 hover:text-white"
-                                disabled={overallLoading}
+                                disabled={formLoading}
                             >
                                 ← Back to Login
                             </button>
@@ -354,7 +320,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onGuestLogin
                                 <button 
                                     onClick={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')} 
                                     className="font-semibold bg-transparent border-none text-orange-400 hover:underline p-0 disabled:opacity-50" 
-                                    disabled={overallLoading}
+                                    disabled={formLoading}
                                 >
                                      {authMode === 'signup' ? 'Log In' : 'Sign Up'}
                                 </button>

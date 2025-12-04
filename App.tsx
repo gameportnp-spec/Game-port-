@@ -354,36 +354,6 @@ const App: React.FC = () => {
         showToast("Account created successfully!", "success");
     };
 
-    const handleGuestLogin = async () => {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        const guestId = `guest_${Date.now().toString().slice(-6)}`;
-        const guestUser: User = {
-            ...MOCK_USER,
-            id: guestId,
-            name: `Guest_${Math.floor(Math.random() * 1000)}`,
-            email: '',
-            password: '',
-            level: 1,
-            coins: 0,
-            isOnline: true,
-            joinedTournaments: [],
-            notifications: [{
-                id: `welcome_guest_${Date.now()}`,
-                message: "Welcome Guest! Sign up to save your progress.",
-                date: new Date(),
-                read: false,
-                type: 'info'
-            }]
-        };
-
-        // Guests are added to user list temporarily
-        setAllUsers(prev => [...prev, guestUser]);
-        setCurrentUser(guestUser);
-        setIsLoggedIn(true);
-        setIsAdmin(false);
-        showToast("Logged in as Guest", "info");
-    };
-
     const handleAdminLogin = () => {
         setCurrentUser(ADMIN_PROFILE);
         setIsLoggedIn(true);
@@ -413,7 +383,6 @@ const App: React.FC = () => {
         
         const num = Math.floor(Math.random() * 9000) + 1000; 
         const code = `GP-${num}`;
-        // In a real app, this would email the code. Here we simulate it.
         setTimeout(() => alert(`Your Verification Code is: ${code}`), 500); 
         return code;
     };
@@ -852,7 +821,6 @@ const App: React.FC = () => {
             <AuthScreen 
                 onLogin={handleLogin} 
                 onSignUp={handleSignUp} 
-                onGuestLogin={handleGuestLogin} 
                 onAdminLogin={handleAdminLogin}
                 onForgotPassword={handleForgotPassword}
                 onResetPassword={handleResetPassword}
