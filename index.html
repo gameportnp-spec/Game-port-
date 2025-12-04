@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Fire Tournament Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif; /* Professional Font */
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .font-rajdhani {
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* Page Transitions */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .page-enter {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        .page-enter-active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .page-exit {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .page-exit-active {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in-out forwards; }
+
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        .animate-fade-out { animation: fadeOut 0.5s ease-in-out forwards; }
+
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .animate-zoom-in { animation: zoomIn 0.7s ease-in-out forwards; }
+        
+        @keyframes zoomOut { from { transform: scale(1); opacity: 1; } to { transform: scale(1.2); opacity: 0; } }
+        .animate-zoom-out { animation: zoomOut 0.7s ease-in-out forwards; }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-bounce-in { animation: bounceIn 1s ease-out forwards; }
+
+        @keyframes slideInUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-in-up { animation: slideInUp 0.6s ease-out forwards; opacity: 0; animation-fill-mode: forwards; }
+
+        @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-in-down { animation: slideInDown 0.6s ease-out forwards; opacity: 0; animation-fill-mode: forwards; }
+        
+        /* Professional Ken Burns Effect */
+        @keyframes slowZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+        .animate-slow-zoom { animation: slowZoom 6s linear infinite alternate; }
+
+        .bounce-on-click:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease-in-out;
+        }
+        
+        .ripple {
+            background-position: center;
+            transition: background 0.8s;
+        }
+        .ripple:hover {
+            background: #ff9800 radial-gradient(circle, transparent 1%, #ff9800 1%) center/15000%;
+        }
+        .ripple:active {
+            background-color: #f57c00;
+            background-size: 100%;
+            transition: background 0s;
+        }
+        
+        @keyframes spin-logo {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-logo {
+            animation: spin-logo 1s linear infinite;
+        }
+
+        /* Pull to refresh */
+        .pull-to-refresh-container {
+            position: relative;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .ptr-indicator {
+            position: absolute;
+            top: -50px; /* Start hidden */
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            pointer-events: none;
+            transition: transform 0.3s ease-out; /* Smoother transition */
+            z-index: 15; /* Ensure it's above the sticky header (z-10) */
+        }
+
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+</head>
+<body class="bg-gray-950 text-white overflow-hidden antialiased">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
