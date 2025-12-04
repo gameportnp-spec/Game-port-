@@ -327,18 +327,18 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onSignUp, onAdminLogin
                             </p>
                         )}
                     </div>
-                </div>
-            </div>
 
-            {/* Admin Login Button - Fixed at bottom */}
-            <div className="relative z-20 pb-6 px-4 flex justify-center w-full">
-                <button 
-                    onClick={() => setIsPinModalOpen(true)}
-                    className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors group opacity-70 hover:opacity-100"
-                >
-                    <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
-                    <span className="text-xs uppercase tracking-[0.2em] font-orbitron group-hover:underline">GamePort Official Private Account</span>
-                </button>
+                    {/* Admin Button Relocated Inside Card */}
+                    <div className="mt-6 pt-4 border-t border-white/10 flex justify-center">
+                        <button 
+                            onClick={() => setIsPinModalOpen(true)}
+                            className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors group opacity-80 hover:opacity-100"
+                        >
+                            <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
+                            <span className="text-[10px] uppercase tracking-widest font-orbitron group-hover:underline">GamePort Official Private Account</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <PinEntryModal 
